@@ -1,4 +1,4 @@
-Sub Module_2()
+Sub VBA()
 
 'Loop through each sheet
 For Each ws In Worksheets
@@ -14,9 +14,7 @@ Dim greatest_decrease As Double
 Dim total_ticker As String
 Dim greatest_total As Double
 
-LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
-
-'Input the Header Text
+'Input the Header Text for ws
 ws.Cells(1, 9).Value = "Ticker"
 ws.Cells(1, 10).Value = "Yearly Change"
 ws.Cells(1, 11).Value = "Percent Change"
@@ -30,21 +28,22 @@ ws.Cells(1, 16).Value = "Value"
 Row = 2
 
 'Testing a smaller sample
-For I = 2 To LastRow
+For i = 2 To 100000
 
-close_price = ws.Cells(I, 6).Value
-open_price = ws.Cells(I, 3).Value
-volume = ws.Cells(I, 7).Value
 
-'If the next row's ticker does not equal the current row, then input the previous ticker
-If ws.Cells(I, 1).Value <> ws.Cells(I + 1, 1).Value Then
+open_stockprice = ws.Cells(i, 3).Value
+close_stockprice = ws.Cells(i, 6).Value
+volume = ws.Cells(i, 7).Value
 
-x = close_price - open_price
-Z = open_price
+'If the next row's ticker does not equal the current row, then input the previous ticker, add If
+If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
+
+c = close_stockprice - open_stockprice
+o = open_stockprice
 a = volume
 
-yearly_change = yearly_change + x
-denom = denom + Z
+yearly_change = c
+denom = denom + o
 sum_volume = sum_volume + a
 
 percent_change = (yearly_change / denom) * 100
@@ -62,64 +61,65 @@ percent_change = 0
 sum_volume = 0
 
 Else
-Ticker = ws.Cells(I, 1).Value
-x = close_price - open_price
-yearly_change = yearly_change + x
+Ticker = ws.Cells(i, 1).Value
+c = close_stockprice - open_stockprice
+yearly_change = yearly_change + c
 a = volume
 sum_volume = sum_volume + a
 
-Z = open_price
-denom = denom + Z
+o = open_stockprice
+denom = denom + o
 
 End If
-Next I
+Next i
 
-'Greatest Percent Increase
+'Greatest Percent Increase Calculation
 greatest_increase = 0
-For e = 2 To LastRow
+For e = 2 To 400
     If ws.Cells(e, 11).Value > greatest_increase Then
         greatest_ticker = ws.Cells(e, 9).Value
         greatest_increase = ws.Cells(e, 11).Value
     End If
 Next e
 
-ws.Cells(2, 16).Value = greatest_increase
 ws.Cells(2, 15).Value = greatest_ticker
+ws.Cells(2, 16).Value = greatest_increase
 
 'Greatest Percent Decrease
 greatest_decrease = 0
-For ee = 2 To LastRow
-    If ws.Cells(ee, 11).Value < greatest_decrease Then
-        lowest_ticker = ws.Cells(ee, 9).Value
-        greatest_decrease = ws.Cells(ee, 11).Value
+For f = 2 To 400
+    If ws.Cells(f, 11).Value < greatest_decrease Then
+        lowest_ticker = ws.Cells(f, 9).Value
+        greatest_decrease = ws.Cells(f, 11).Value
     End If
-Next ee
+Next f
 
-ws.Cells(3, 16).Value = greatest_decrease
 ws.Cells(3, 15).Value = lowest_ticker
+ws.Cells(3, 16).Value = greatest_decrease
+
 
 'Greatest Total Volume
 greatest_total = 0
-For eee = 2 To LastRow
-    If ws.Cells(eee, 12).Value > greatest_total Then
-        total_ticker = ws.Cells(eee, 9).Value
-        greatest_total = ws.Cells(eee, 12).Value
+For g = 2 To 402
+    If ws.Cells(g, 12).Value > greatest_total Then
+        total_ticker = ws.Cells(g, 9).Value
+        greatest_total = ws.Cells(g, 12).Value
     End If
-Next eee
+Next g
 
-ws.Cells(4, 16).Value = greatest_total
 ws.Cells(4, 15).Value = total_ticker
+ws.Cells(4, 16).Value = greatest_total
 
-'Color Coding Yearly Change
-For e4 = 2 To LastRow
-If ws.Cells(e4, 10).Value > 0 Then
-    ws.Cells(e4, 10).Interior.Color = vbRed
+
+'Background Color Coding Yearly Change
+For i = 2 To lastrow_summary_table
+If ws.Cells(i, 10).Value > 0 Then
+    ws.Cells(i, 10).Interior.ColorIndex = vbRed
     Else
-    ws.Cells(e4, 10).Interior.Color = vbGreen
+        ws.Cells(1, 10).Interior.ColorIndex = vbGreen
     End If
-    Next e4
+    Next i
 
 Next ws
 
 End Sub
-
